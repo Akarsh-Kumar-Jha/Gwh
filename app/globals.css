@@ -36,17 +36,6 @@
 
   --shadow-soft: var(--shadow-soft);
   --shadow-soft-hover: var(--shadow-soft-hover);
-
-  /* Spacing Scale override for GrowWithHustler */
-  --spacing-8: 8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-24: 24px;
-  --spacing-32: 32px;
-  --spacing-48: 48px;
-  --spacing-64: 64px;
-  --spacing-96: 96px;
-  --spacing-128: 128px;
 }
 
 :root {
@@ -112,10 +101,78 @@
   }
 
   html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 104px;
+    /* Keeps anchored sections clear of the fixed navbar (see Navbar heights) */
+    scroll-padding-top: 72px;
     @apply font-sans;
   }
+
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 88px;
+    }
+  }
+
+  /* Lock page scroll while a modal (e.g. the video player) is open */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background-color: #ffd43b;
+    color: #111111;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Entrance animation that runs on first paint, before JavaScript loads */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Process orbit: the ring spins while each node counter-spins to stay upright */
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orbit-spin {
+  animation: orbit-spin 90s linear infinite;
+}
+
+.orbit-counter {
+  animation: orbit-spin 90s linear infinite reverse;
+}
+
+.orbit-paused .orbit-spin,
+.orbit-paused .orbit-counter {
+  animation-play-state: paused;
 }
 
 /* Custom underline animation for Ghost button */

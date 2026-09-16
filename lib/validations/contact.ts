@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { SERVICE_VALUES } from "@/lib/services";
 
 export const contactFormSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, { message: "Name must be at least 2 characters" })
+    .min(2, { message: "Please enter your name (at least 2 characters)" })
     .max(100, { message: "Name must be less than 100 characters" }),
   email: z
     .string()
@@ -14,13 +15,10 @@ export const contactFormSchema = z.object({
     .string()
     .trim()
     .max(25, { message: "Phone number is too long" })
+    .regex(/^[+\d\s()-]*$/, { message: "Use digits, spaces and + ( ) - only" })
     .optional()
     .or(z.literal("")),
-  service: z
-    .enum(["website", "app", "saas", "ai", "automation", "other"], {
-      message: "Please select what you need",
-    })
-    .default("app"),
+  service: z.enum(SERVICE_VALUES, { message: "Please choose what you need" }),
   message: z
     .string()
     .trim()

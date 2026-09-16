@@ -1,70 +1,61 @@
 import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/validations/contact";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
+
+/** Hidden form field real visitors never see; bots tend to fill it in. */
+const HONEYPOT_FIELD = "nickname";
 
 export async function POST(request: Request) {
+  let json: Record<string, unknown>;
   try {
-    const json = await request.json();
-    const parseResult = contactFormSchema.safeParse(json);
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
 
-    if (!parseResult.success) {
-      const fieldErrors = parseResult.error.flatten().fieldErrors;
+  if (typeof json[HONEYPOT_FIELD] === "string" && json[HONEYPOT_FIELD] !== "") {
+    // Pretend it worked so bots don't retry, but store nothing.
+    return NextResponse.json({ success: true }, { status: 200 });
+  }
+
+  const parseResult = contactFormSchema.safeParse(json);
+  if (!parseResult.success) {
+    return NextResponse.json(
+      { error: "Please check the highlighted fields.", details: parseResult.error.flatten().fieldErrors },
+      { status: 400 }
+    );
+  }
+
+  const supabase = getSupabase();
+  if (!supabase) {
+    console.error("Contact form: Supabase is not configured, enquiry was not stored.");
+    return NextResponse.json(
+      { error: "Our enquiry form is temporarily unavailable." },
+      { status: 503 }
+    );
+  }
+
+  const { name, email, phone, service, message } = parseResult.data;
+
+  try {
+    const { error } = await supabase.from("enquiries").insert([
+      { name, email, phone: phone || null, service, message: message || null },
+    ]);
+
+    if (error) {
+      console.error("Contact form: failed to store enquiry.", error);
       return NextResponse.json(
-        { error: "Validation failed", details: fieldErrors },
-        { status: 400 }
+        { error: "We couldn't send your enquiry right now." },
+        { status: 500 }
       );
     }
-
-    const { name, email, phone, service, message } = parseResult.data;
-
-    // Log the enquiry locally
-    console.log("New Project Enquiry:", {
-      name,
-      email,
-      phone: phone || "Not provided",
-      service,
-      message: message || "No message provided",
-      timestamp: new Date().toISOString(),
-    });
-
-    const supabaseKey =
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-      process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    // Save submission into Supabase database if configured
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL && supabaseKey) {
-      const { error: dbError } = await supabase.from("enquiries").insert([
-        {
-          name,
-          email,
-          phone: phone || null,
-          service,
-          message: message || null,
-        },
-      ]);
-
-      if (dbError) {
-        console.error("Supabase Database Error:", dbError);
-        return NextResponse.json(
-          { error: `Database error: ${dbError.message}` },
-          { status: 500 }
-        );
-      }
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Thanks! We've received your enquiry and will get back to you within 1 business day.",
-      },
-      { status: 200 }
-    );
   } catch (error) {
-    console.error("Error processing enquiry:", error);
+    console.error("Contact form: unexpected error.", error);
     return NextResponse.json(
-      { error: "Failed to process enquiry. Please try again." },
+      { error: "We couldn't send your enquiry right now." },
       { status: 500 }
     );
   }
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }

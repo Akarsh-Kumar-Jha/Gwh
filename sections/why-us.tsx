@@ -1,262 +1,142 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  Zap,
-  Shield,
-  MessageCircle,
-  TrendingUp,
-} from "lucide-react";
+import { motion, MotionConfig } from "framer-motion";
+import { Code2, Mail, MessagesSquare, Rocket, Sparkles, Users, Zap, type LucideIcon } from "lucide-react";
+import { Container } from "@/components/layout/container";
+import { Eyebrow, Highlight, SECTION_LEAD, SECTION_TITLE } from "@/components/ui/section-heading";
+import { cn } from "@/lib/utils";
 
-/* ─────────────────────────────────────────
-   Shared fade-up variant (scroll-triggered)
-───────────────────────────────────────── */
-const fadeUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      delay: i * 0.06,
-      ease: [0.215, 0.61, 0.355, 1] as [number, number, number, number],
-    },
-  }),
-};
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-/* ─────────────────────────────────────────
-   CLEAN & TRANSPARENT FEATURE CARD COMPONENT
-───────────────────────────────────────── */
-interface FeatureCardProps {
-  badge: string;
-  title: string;
-  desc: string;
-  rotate: number;
-  idx: number;
-}
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.6, delay, ease: EASE },
+});
 
-function FeatureCard({
-  badge,
-  title,
-  desc,
-  rotate,
-  idx,
-}: FeatureCardProps) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-20px" }}
-      variants={fadeUp}
-      custom={idx * 0.08 + 0.1}
-      whileHover={{ y: -5, rotate }}
-      transition={{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }}
-      className="relative bg-transparent border-[2px] border-[#222222] rounded-[18px] p-5 flex flex-col justify-between overflow-hidden cursor-pointer group select-none transition-all duration-200 hover:border-primary hover:shadow-[0_10px_24px_rgba(0,0,0,0.06)]"
-      style={{ boxShadow: "2px 2px 0 rgba(17,17,17,0.04)" }}
-    >
-      {/* Top Row: Micro Badge */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-primary bg-[#EEF2FF] font-sans text-[9.5px] font-extrabold text-primary tracking-wide">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span>{badge}</span>
-        </div>
-      </div>
+const REASONS: { badge: string; title: string; desc: string; Icon: LucideIcon }[] = [
+  {
+    badge: "2–4 week MVPs",
+    title: "Fast execution",
+    desc: "Short weekly sprints get a working product in front of users in weeks, not months.",
+    Icon: Zap,
+  },
+  {
+    badge: "AI native",
+    title: "AI-first approach",
+    desc: "We use AI to move faster and build AI features where they genuinely help your users.",
+    Icon: Sparkles,
+  },
+  {
+    badge: "Production ready",
+    title: "Clean, scalable code",
+    desc: "Maintainable, production-ready codebases your future team can pick up and extend.",
+    Icon: Code2,
+  },
+  {
+    badge: "Weekly demos",
+    title: "Founder friendly",
+    desc: "Transparent async updates, a live demo every week and no surprises on scope or cost.",
+    Icon: Users,
+  },
+];
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col justify-end">
-        <h3 className="font-heading font-black text-[17px] sm:text-[18px] text-[#111111] leading-tight mb-1.5 tracking-tight group-hover:text-primary transition-colors">
-          {title}
-        </h3>
-        <p className="font-sans text-[12.5px] sm:text-[13px] text-[#555555] leading-[1.55] mb-3.5">
-          {desc}
-        </p>
+const STATS: { Icon: LucideIcon; value: string; label: string }[] = [
+  { Icon: Rocket, value: "6+", label: "Products shipped" },
+  { Icon: Zap, value: "2–4 weeks", label: "Typical MVP timeline" },
+  { Icon: Mail, value: "1 day", label: "Reply to every enquiry" },
+  { Icon: MessagesSquare, value: "Direct", label: "Access to the builders" },
+];
 
-        {/* CTA */}
-        <div className="flex items-center gap-1 font-sans font-extrabold text-[11.5px] text-primary group-hover:gap-2 transition-all duration-200">
-          <span className="relative">
-            Learn More
-            <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-primary group-hover:w-full transition-all duration-200" />
-          </span>
-          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────────────
-   MAIN WHY US SECTION
-───────────────────────────────────────── */
 export function WhyUs() {
-  const benefits = [
-    { Icon: Zap,           stat: "2–4 Weeks",  label: "Average MVP Delivery"  },
-    { Icon: Shield,        stat: "100%",        label: "Quality Focus"          },
-    { Icon: MessageCircle, stat: "24/7",        label: "Communication"         },
-    { Icon: TrendingUp,    stat: "Long-term",   label: "Partnership"            },
-  ];
-
   return (
-    <section className="relative w-full bg-background overflow-hidden py-10 lg:py-12 min-h-[90vh] flex flex-col justify-center select-none">
+    <MotionConfig reducedMotion="user">
+      <section
+        aria-labelledby="why-us-heading"
+        className="relative w-full overflow-hidden bg-background py-20 sm:py-24"
+      >
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.14]">
+          <Image src="/images/hero/GWH_Background Texture.png" alt="" fill sizes="100vw" className="object-cover" />
+        </div>
 
-      {/* Texture Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.14]">
-        <Image src="/images/hero/GWH_Background Texture.png" alt="" fill className="object-cover" priority />
-      </div>
+        <Container className="relative">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
+            <div>
+              <motion.div {...reveal()}>
+                <Eyebrow>Why startups choose us</Eyebrow>
+                <h2 id="why-us-heading" className={cn(SECTION_TITLE, "mt-5")}>
+                  Why founders choose <Highlight>Grow With Hustler</Highlight>
+                </h2>
+                <p className={cn(SECTION_LEAD, "mt-5 max-w-[520px]")}>
+                  We partner with founders to <strong className="font-semibold text-primary">build</strong>,{" "}
+                  <strong className="font-semibold text-primary">ship</strong> and{" "}
+                  <strong className="font-semibold text-primary">scale</strong> digital products that users love.
+                </p>
+              </motion.div>
 
-      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12">
-
-        {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[42fr_58fr] gap-6 lg:gap-8 xl:gap-10 items-center">
-
-          {/* ── LEFT COLUMN ── */}
-          <div className="flex flex-col justify-center max-w-[530px]">
-
-            {/* Badge */}
-            <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} custom={0} className="mb-2.5">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border-[1.5px] border-[#222222] bg-transparent font-sans text-[10px] font-bold uppercase tracking-wider text-[#111111]">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <span>Why Startups Choose Us</span>
-              </div>
-            </motion.div>
-
-            {/* Heading */}
-            <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} custom={0.08} className="mb-2">
-              <h2 className="font-heading font-black leading-[0.95] tracking-tight text-[#111111]" style={{ fontSize: "clamp(28px, 2.7vw, 42px)" }}>
-                Why Startups Choose <br />
-                <span className="relative inline-block text-primary">
-                  Grow With Hustler
-                  {/* Yellow Underline */}
-                  <motion.svg
-                    className="absolute -bottom-1 left-0 w-full overflow-visible"
-                    viewBox="0 0 140 8"
-                    preserveAspectRatio="none"
-                    style={{ transformOrigin: "left center", height: 5 }}
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.3 }}
+              <ul className="mt-9 grid gap-4 sm:grid-cols-2">
+                {REASONS.map(({ badge, title, desc, Icon }, i) => (
+                  <motion.li
+                    key={title}
+                    {...reveal(0.06 * i)}
+                    className="rounded-[20px] border-[1.5px] border-[#222] bg-white/60 p-5 shadow-[3px_3px_0_rgba(17,17,17,0.06)]"
                   >
-                    <path d="M 2,5.5 Q 70,1.5 138,5.5" fill="none" stroke="#FFD43B" strokeWidth="3" strokeLinecap="round" />
-                  </motion.svg>
-                </span>
-              </h2>
-            </motion.div>
-
-            {/* Paragraph */}
-            <motion.p initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} custom={0.14} className="font-sans text-[13px] text-[#6B6B6B] leading-relaxed mb-4 max-w-[440px]">
-              We partner with founders to{" "}
-              <span className="text-primary font-bold">build</span>,{" "}
-              <span className="text-primary font-bold">ship</span> and{" "}
-              <span className="text-primary font-bold">scale</span> digital products that users love.
-            </motion.p>
-
-            {/* ── 4 SIMPLE TRANSPARENT FEATURE CARDS ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {/* Card 1: Fast Execution */}
-              <FeatureCard
-                badge="2–4 Weeks MVP"
-                title="Fast Execution"
-                desc="Launch MVPs in weeks, not months."
-                rotate={-1.2}
-                idx={0}
-              />
-
-              {/* Card 2: AI First Approach */}
-              <FeatureCard
-                badge="Powered by AI"
-                title="AI First Approach"
-                desc="AI-powered workflows built into every project."
-                rotate={1.2}
-                idx={1}
-              />
-
-              {/* Card 3: Clean & Scalable Code */}
-              <FeatureCard
-                badge="Production Ready"
-                title="Clean & Scalable Code"
-                desc="Maintainable, production-ready codebases."
-                rotate={-1}
-                idx={2}
-              />
-
-              {/* Card 4: Founder Friendly */}
-              <FeatureCard
-                badge="Weekly Updates"
-                title="Founder Friendly"
-                desc="Transparent async communication &amp; weekly syncs."
-                rotate={1}
-                idx={3}
-              />
+                    <div className="flex items-center justify-between gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="flex size-10 items-center justify-center rounded-xl border border-primary/20 bg-[#EEF2FF] text-primary"
+                      >
+                        <Icon className="size-5" />
+                      </span>
+                      <span className="rounded-full border border-primary/30 bg-[#EEF2FF] px-2.5 py-1 font-sans text-[12px] font-semibold text-primary">
+                        {badge}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 font-heading text-[18px] font-bold tracking-[-0.01em] text-[#111]">{title}</h3>
+                    <p className="mt-1.5 font-sans text-[14.5px] leading-[1.6] text-[#555]">{desc}</p>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
 
-          </div>
-
-          {/* ── RIGHT COLUMN — HIGH-RES DASHBOARD ECOSYSTEM ILLUSTRATION ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, ease: [0.215, 0.61, 0.355, 1] }}
-            whileHover={{ y: -4 }}
-            className="w-full flex items-center justify-center relative py-1"
-          >
-            <div className="relative w-full max-w-[540px] lg:max-w-[600px] xl:max-w-[640px] aspect-square select-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.08)]">
+            <motion.div {...reveal(0.1)} className="mx-auto w-full max-w-[600px]">
               <Image
                 src="/images/why-us/why_us_dashboard_transparent.png"
-                alt="Grow With Hustler Product & Tech Dashboard"
-                fill
-                unoptimized
-                quality={100}
-                className="object-contain"
-                priority
+                alt="Illustration of a product dashboard with deployments, analytics and performance scores"
+                width={1024}
+                height={1024}
+                quality={90}
+                sizes="(min-width: 1280px) 600px, (min-width: 1024px) 50vw, 90vw"
+                className="h-auto w-full drop-shadow-[0_20px_35px_rgba(0,0,0,0.08)]"
               />
-            </div>
-          </motion.div>
-
-        </div>
-
-        {/* ── BOTTOM METRICS STRIP ── */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          custom={0.4}
-          className="mt-6"
-        >
-          <div className="flex items-center justify-center gap-1.5 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span className="font-sans font-extrabold text-[9.5px] uppercase tracking-widest text-[#6B6B6B]">
-              Built For Startup Speed
-            </span>
+            </motion.div>
           </div>
 
-          <div
-            className="bg-transparent border-[1.5px] border-[#222222] rounded-[14px] px-4 sm:px-6 py-3 sm:py-2.5"
-            style={{ boxShadow: "2px 2px 0 rgba(17,17,17,0.04)" }}
+          <motion.ul
+            {...reveal()}
+            className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-[20px] border-[1.5px] border-[#222] bg-[#222]/10 lg:mt-16 lg:grid-cols-4"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-3 gap-x-4 sm:gap-0 sm:divide-x sm:divide-[#222222]/15">
-              {benefits.map(({ Icon, stat, label }) => (
-                <div key={label} className="flex items-start sm:items-center gap-2.5 sm:justify-center sm:px-3 sm:first:pl-0 sm:last:pr-0">
-                  <div className="w-7 h-7 rounded-full border border-[#222222] bg-transparent flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
-                    <Icon className="text-primary" style={{ width: 13, height: 13 }} />
-                  </div>
-                  <div>
-                    <p className="font-heading font-black text-[14px] sm:text-[15px] text-[#111111] leading-none tracking-tight">
-                      {stat}
-                    </p>
-                    <p className="font-sans text-[9.5px] text-[#6B6B6B] leading-tight mt-0.5">{label}</p>
-                  </div>
+            {STATS.map(({ Icon, value, label }) => (
+              <li key={label} className="flex items-center gap-3.5 bg-[#FBF8F0] px-5 py-5 sm:px-6">
+                <span
+                  aria-hidden="true"
+                  className="hidden size-10 shrink-0 items-center justify-center rounded-full border border-[#222]/15 bg-white text-primary sm:flex"
+                >
+                  <Icon className="size-[18px]" />
+                </span>
+                <div>
+                  <p className="font-heading text-[20px] font-extrabold leading-none tracking-[-0.02em] text-[#111] sm:text-[22px]">
+                    {value}
+                  </p>
+                  <p className="mt-1.5 font-sans text-[13px] leading-snug text-[#6B6B6B]">{label}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-
-      </div>
-    </section>
+              </li>
+            ))}
+          </motion.ul>
+        </Container>
+      </section>
+    </MotionConfig>
   );
 }

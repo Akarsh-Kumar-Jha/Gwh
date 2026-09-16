@@ -1,113 +1,81 @@
-"use client";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import { Container } from "@/components/layout/container";
+import { Eyebrow, Highlight, SECTION_LEAD, SECTION_TITLE } from "@/components/ui/section-heading";
+import { cn } from "@/lib/utils";
 
-import * as React from "react";
-import { motion } from "framer-motion";
-import { Globe, ExternalLink } from "lucide-react";
+const FOUNDERS = [
+  {
+    name: "Arunabha Banerjee",
+    role: "Co-Founder & Product Architect",
+    bio: "A full-stack developer and product architect who loves building scalable web products with thoughtful, polished user experiences.",
+    photo: "/images/about/arunabha.png",
+    domain: "arunabha.dev",
+    url: "https://www.arunabha.dev",
+    accent: "border-t-[#FFD43B]",
+  },
+  {
+    name: "Akarsh Kumar",
+    role: "Co-Founder & Full Stack Developer",
+    bio: "Turns ideas into real products, with a focus on clean code, AI integrations and solutions that deliver measurable impact.",
+    photo: "/images/about/akarsh.png",
+    domain: "akarshjha.dev",
+    url: "https://www.akarshjha.dev",
+    accent: "border-t-primary",
+  },
+];
 
 export function AboutFounders() {
-  const founders = [
-    {
-      name: "Arunabha Banerjee",
-      role: "Co-Founder & Product Architect",
-      bio: "Arunabha is a full-stack developer and product architect passionate about building scalable web solutions and beautiful user experiences.",
-      domain: "arunabha.dev",
-      url: "https://arunabha.dev",
-      accentBorder: "border-l-[#FFD43B]",
-    },
-    {
-      name: "Akarsh Kumar",
-      role: "Co-Founder & Full Stack Developer",
-      bio: "Akarsh loves turning ideas into real products. He focuses on clean code, AI integrations, and creating solutions that deliver real impact.",
-      domain: "akarshjha.dev",
-      url: "https://akarshjha.dev",
-      accentBorder: "border-l-primary",
-    },
-  ];
-
   return (
-    <section className="relative w-full pt-12 sm:pt-16 lg:pt-24 pb-16 sm:pb-20">
-      <div className="w-full max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-10">
-        
-        {/* Header */}
-        <div className="text-center max-w-[620px] mx-auto mb-8 sm:mb-10 lg:mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#222222]/20 bg-white/60 text-[11px] font-bold tracking-wide text-[#111111] shadow-2xs mb-3"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            THE FOUNDERS
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.06 }}
-            className="font-heading font-black text-[#111111] leading-[1.08] text-[28px] sm:text-[36px] lg:text-[42px] mb-3"
-          >
-            The People Behind{" "}
-            <span className="relative inline-block text-primary">
-              Grow With Hustler
-              <span className="absolute -bottom-1 left-0 w-full h-[4px] bg-[#FFD43B] rounded-full" />
-            </span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.12 }}
-            className="font-sans text-[13.5px] sm:text-[15px] text-[#555555] leading-relaxed"
-          >
-            We&apos;re not just developers — we&apos;re builders, problem solvers, and entrepreneurs. Together, we bring ideas to life.
-          </motion.p>
+    <section aria-labelledby="founders-heading" className="relative w-full py-16 lg:py-24">
+      <Container>
+        <div className="mx-auto max-w-[640px] text-center">
+          <Eyebrow>The founders</Eyebrow>
+          <h2 id="founders-heading" className={cn(SECTION_TITLE, "mt-5")}>
+            The people behind <Highlight>Grow With Hustler</Highlight>
+          </h2>
+          <p className={cn(SECTION_LEAD, "mt-5")}>
+            We&apos;re builders, problem solvers and entrepreneurs. When you work with us, you work directly with us.
+          </p>
         </div>
 
-        {/* Founders Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {founders.map((founder, index) => (
-            <motion.div
+        <ul className="mx-auto mt-12 grid max-w-[1040px] gap-6 md:grid-cols-2">
+          {FOUNDERS.map((founder) => (
+            <li
               key={founder.name}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: index * 0.1 }}
-              whileHover={{ y: -3 }}
-              className={`bg-white border-[1.5px] border-[#222222]/15 rounded-[22px] p-6 sm:p-8 shadow-[0_4px_24px_rgba(17,17,17,0.03)] flex flex-col justify-between border-l-[5px] ${founder.accentBorder}`}
+              className={cn(
+                "flex flex-col rounded-[24px] border-[1.5px] border-t-[5px] border-[#222]/15 bg-white p-7 shadow-[0_16px_40px_-24px_rgba(17,17,17,0.2)] sm:p-8",
+                founder.accent
+              )}
             >
-              {/* Founder Information */}
-              <div>
-                <h3 className="font-heading font-extrabold text-[20px] sm:text-[22px] text-[#111111] leading-tight mb-1">
-                  {founder.name}
-                </h3>
-                <p className="font-sans font-bold text-[13.5px] text-primary mb-3">
-                  {founder.role}
-                </p>
-                <p className="font-sans text-[13.5px] sm:text-[14px] text-[#555555] leading-relaxed mb-6">
-                  {founder.bio}
-                </p>
+              <div className="flex items-center gap-4">
+                <Image
+                  src={founder.photo}
+                  alt={`Portrait of ${founder.name}`}
+                  width={95}
+                  height={95}
+                  className="size-16 shrink-0 rounded-full border-2 border-white object-cover shadow-sm"
+                />
+                <div>
+                  <h3 className="font-heading text-[22px] font-extrabold leading-tight text-[#111]">{founder.name}</h3>
+                  <p className="mt-1 font-sans text-[14px] font-semibold text-primary">{founder.role}</p>
+                </div>
               </div>
-
-              <div>
-                <a
-                  href={founder.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#EEF2FF] border border-[#2457FF]/20 font-sans text-[12.5px] font-bold text-primary hover:bg-primary hover:text-white transition-all duration-200 shadow-2xs group"
-                >
-                  <Globe className="w-3.5 h-3.5 shrink-0" />
-                  <span>{founder.domain}</span>
-                  <ExternalLink className="w-3 h-3 shrink-0 ml-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
-              </div>
-            </motion.div>
+              <p className="mb-6 mt-5 font-sans text-[15px] leading-[1.7] text-[#555]">{founder.bio}</p>
+              <a
+                href={founder.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${founder.domain}, ${founder.name}'s portfolio (opens in a new tab)`}
+                className="mt-auto inline-flex items-center gap-1.5 self-start rounded-full border border-primary/20 bg-[#EEF2FF] px-4 py-2 font-sans text-[14px] font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+              >
+                {founder.domain}
+                <ArrowUpRight aria-hidden="true" className="size-4" />
+              </a>
+            </li>
           ))}
-        </div>
-
-      </div>
+        </ul>
+      </Container>
     </section>
   );
 }

@@ -1,62 +1,94 @@
-"use client";
-
-import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowUpRight, Mail } from "lucide-react";
+import { Container } from "@/components/layout/container";
+import { NAV_ITEMS, SITE } from "@/lib/site";
+import { SocialLinks } from "@/components/ui/social-links";
+import { SERVICES } from "@/lib/services";
 
+const HEADING = "font-sans text-[12px] font-bold uppercase tracking-[0.12em] text-[#6F6A5E]";
+const LINK = "font-sans text-[14.5px] font-medium text-[#333] transition-colors hover:text-primary";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#FBF7EF] border-t border-[#EAE4D8] text-[#111] select-none">
-      {/* ── Main Container (1280px) ── */}
-      <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-10 py-10 lg:py-12 flex flex-col gap-10">
-
-        {/* ── TOP SECTION (Left, Middle, Right) ── */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 md:gap-6">
-
-          {/* Left: Logo & Tagline */}
-          <div className="flex flex-col gap-3 max-w-[380px]">
-            <Link href="/" className="inline-block relative h-20 w-64 sm:h-24 sm:w-72">
+    <footer className="w-full border-t border-[#EAE4D8] bg-[#FBF7EF] text-[#111]">
+      <Container className="py-14 lg:py-16">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-12">
+          <div className="col-span-2 flex flex-col gap-4 lg:col-span-1">
+            <Link href="/" aria-label="Grow With Hustler home" className="self-start rounded-lg">
               <Image
                 src="/images/hero/GWH_LOGOU.png"
-                alt="Grow With Hustler Logo"
-                fill
-                className="object-contain object-left"
-                priority
+                alt=""
+                width={647}
+                height={385}
+                sizes="140px"
+                className="h-[72px] w-auto"
               />
             </Link>
-            <p className="font-sans text-[13px] font-[450] text-[#666] leading-[1.6]">
-              Building modern websites, AI products and scalable software for ambitious startups.
+            <p className="max-w-[340px] font-sans text-[14.5px] leading-[1.65] text-[#555]">
+              We design and build websites, apps, SaaS platforms and AI products for founders and growing businesses.
             </p>
+            <div className="mt-2">
+              <p className={HEADING}>Follow our work</p>
+              <SocialLinks className="mt-3" />
+            </div>
           </div>
 
-          {/* Right: Email & CTA Button */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+          <nav aria-label="Footer">
+            <h2 className={HEADING}>Company</h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.name}>
+                  <Link href={item.href} className={LINK}>
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div>
+            <h2 className={HEADING}>Services</h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {SERVICES.filter((service) => service.value !== "other").map((service) => (
+                <li key={service.value}>
+                  <Link href="/#services" className={LINK}>
+                    {service.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="col-span-2 lg:col-span-1">
+            <h2 className={HEADING}>Get in touch</h2>
             <a
-              href="mailto:growwithhustler@gmail.com"
-              className="font-sans text-[13px] font-semibold text-[#111] hover:text-primary transition-colors flex items-center gap-2"
+              href={`mailto:${SITE.email}`}
+              className="mt-4 inline-flex items-center gap-2 break-all font-sans text-[15px] font-semibold text-[#111] transition-colors hover:text-primary"
             >
-              growwithhustler@gmail.com
+              <Mail aria-hidden="true" className="size-4 shrink-0 text-primary" />
+              {SITE.email}
             </a>
-
+            <p className="mt-2 font-sans text-[14px] leading-[1.6] text-[#555]">
+              We reply within one business day.
+            </p>
+            <Link
+              href="/#contact"
+              className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl border-[1.5px] border-[#222] bg-[#111] px-5 font-heading text-[14px] font-bold text-white transition-colors hover:bg-primary hover:border-primary"
+            >
+              Start a project
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            </Link>
           </div>
-
         </div>
 
-        {/* ── BOTTOM DIVIDER & ROW ── */}
-        <div className="pt-6 border-t border-[#EAE4D8] flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Left: Copyright */}
-          <p className="font-sans text-[11.5px] font-normal text-[#777]">
-            © {new Date().getFullYear()} Grow With Hustler
+        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-[#EAE4D8] pt-6 sm:flex-row sm:items-center">
+          <p className="font-sans text-[13px] text-[#6B6B6B]">
+            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </p>
-
-          {/* Right: Made in India */}
-          <p className="font-sans text-[11.5px] font-medium text-[#555]">
-            Made with ❤️ in India
-          </p>
+          <p className="font-sans text-[13px] text-[#6B6B6B]">Designed &amp; built in India</p>
         </div>
-
-      </div>
+      </Container>
     </footer>
   );
 }
